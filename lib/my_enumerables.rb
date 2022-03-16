@@ -12,11 +12,9 @@ module Enumerable
 
   def my_select
     return to_enum(:my_select) unless block_given?
-  
-    selected = []
-    for i in self
-      selected.push i if yield i
-    end
+    selected = self.is_a?(Hash) ? {} : []
+
+    my_each { |element| selected << element if yield element }
     selected
   end
   
@@ -25,9 +23,7 @@ module Enumerable
     return to_enum(:my_all?) unless block_given?
     result = true
 
-    for i in self
-      result = false unless yield i
-    end
+    my_each { |element| result = false unless yield element }
     result
   end
 
@@ -35,9 +31,7 @@ module Enumerable
     return to_enum(:my_any?) unless block_given?
     result = false
 
-    for i in self
-      result = true if yield i
-    end
+    my_each {|element| result = true if yield element }
     result
   end
 
@@ -45,9 +39,7 @@ module Enumerable
     return to_enum(:my_none?) unless block_given?
     result = true
 
-    for i in self
-      result = false if yield i
-    end
+    my_each {|element| result = false if yield element }
     result
   end
 
@@ -55,19 +47,15 @@ module Enumerable
     return to_enum(:my_count) unless block_given?
     count = 0
 
-    for i in self
-      count += 1 if yield i
-    end
+    my_each {|element| count += 1 if yield element }
     count
   end
 
   def my_map
     return to_enum(:my_map) unless block_given?
-    map = []
+    map = self.is_a?(Hash) ? {} : []
 
-    for i in self
-      map.push(yield i)
-    end
+    my_each {|element| map.push yield element }
     map
   end
 
@@ -75,9 +63,7 @@ module Enumerable
     return to_enum(:my_inject) unless block_given?
     total = initial
 
-    for i in self
-      total = yield total, i
-    end
+    my_each {|element| total = yield(total, element)}
     total
   end
 
